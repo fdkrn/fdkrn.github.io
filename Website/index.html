@@ -1,0 +1,199 @@
+ <!DOCTYPE html>
+<html>
+<head>
+
+<title>Karin Collection</title>
+<link rel="stylesheet" href="mystyle.css">
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const goTopBtn = document.getElementById("goTopBtn");
+
+    window.addEventListener("scroll", function() {
+      if (window.pageYOffset > 100) {
+        goTopBtn.style.display = "block";
+      } else {
+        goTopBtn.style.display = "none";
+      }
+    });
+
+    goTopBtn.addEventListener("click", function() {
+      let start = null;
+      let duration = 1200; // Dauer der Animation in ms
+      let initialScroll = window.pageYOffset;
+      let animationFrameId = null;
+      let isScrollingManually = false;
+
+      // Listener, um manuelles Scrollen zu erkennen
+      function onUserScroll() {
+        isScrollingManually = true;
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        window.removeEventListener('wheel', onUserScroll);
+        window.removeEventListener('touchstart', onUserScroll);
+        window.removeEventListener('keydown', onUserScroll);
+      }
+
+      window.addEventListener('wheel', onUserScroll, {passive: true});
+      window.addEventListener('touchstart', onUserScroll, {passive: true});
+      window.addEventListener('keydown', onUserScroll, {passive: true});
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        let elapsed = timestamp - start;
+
+        if (isScrollingManually) return; // Abbrechen, wenn Nutzer scrollt
+
+        let progress = Math.min(elapsed / duration, 1);
+        let easeInQuad = progress * progress;
+
+        let scrollPos = initialScroll * (1 - easeInQuad);
+        window.scrollTo(0, scrollPos);
+
+        if (elapsed < duration) {
+          animationFrameId = window.requestAnimationFrame(step);
+        } else {
+          // Animation fertig, Listener entfernen
+          window.removeEventListener('wheel', onUserScroll);
+          window.removeEventListener('touchstart', onUserScroll);
+          window.removeEventListener('keydown', onUserScroll);
+        }
+      }
+
+      animationFrameId = window.requestAnimationFrame(step);
+    });
+  });
+</script>
+
+</head>
+
+<body>
+
+<h1>Oldtimer</h1>
+
+<h3><a href="https://www.renault.de/" target="_blank" rel="noopener noreferrer">Renault</a></h3>
+
+<p>Hier ist ein Bild vom Alpine A110</p>
+<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Renault_Alpine_A_110_%28Sp%29.JPG" alt="Renault Alpine A110" width="1600" height="900">
+
+<details>
+  <summary>Technische Daten – Alpine A110</summary>
+  <ul>
+    <li>Baujahr: 1971</li>
+    <li>Motor: 1.6L Vierzylinder</li>
+    <li>Leistung: 138 PS</li>
+    <li>0–100 km/h: ca. 7,0 s</li>
+    <li>Höchstgeschwindigkeit: 210 km/h</li>
+    <li>Gewicht: ca. 700 kg</li>
+    <li>Antrieb: Heckantrieb</li>
+  </ul>
+</details>
+
+<p>Hier ist ein Video vom Renault-Alpine A110</p>
+<iframe width="1600" height="900" src="https://www.youtube.com/embed/A8q-Wom2ii0" title="Renault Alpine A110 Berlinette 1.3 | ON BOARD | Pure Sound And Acceleration |" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+allowfullscreen></iframe>
+
+<h3><a href="https://www.porsche.de/" target="_blank" rel="noopener noreferrer">Porsche</a></h3>
+
+<p>Hier ist ein Bild vom Porsche 959</p>
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Porsche_959_%E2%80%93_Frontansicht_%282%29%2C_21._M%C3%A4rz_2013%2C_D%C3%BCsseldorf.jpg" width="1600" height="900"></img>
+
+<details>
+  <summary>Technische Daten – Porsche 959</summary>
+  <ul>
+    <li>Baujahr: 1986</li>
+    <li>Motor: 2.85L Sechszylinder Boxer mit Bi-Turbo</li>
+    <li>Leistung: 450 PS</li>
+    <li>0–100 km/h: ca. 3,7 s</li>
+    <li>Höchstgeschwindigkeit: 317 km/h</li>
+    <li>Gewicht: ca. 1.450 kg</li>
+    <li>Antrieb: Allradantrieb</li>
+  </ul>
+</details>
+
+<p>Hier ist ein Video vom Porsche 959</p>
+<iframe width="1600" height="900" src="https://www.youtube.com/embed/d51HC0EBC20" title="Porsche 959 - Pure Driving Footage"
+frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+referrerpolicy="strict-origin-when-cross-origin"
+allowfullscreen></iframe>
+
+<h3><a href="https://www.ferrari.de/"  target="_blank" rel="noopener noreferrer">Ferrari</a></h3>
+
+<p>Hier ist ein Bild vom Ferrari F40</p>
+<img src="https://cdn.ferrari.com/cms/network/media/img/resize/5de7923a91756c07f10b1720-ferrari-f40-1987-intro-share?width=1080" width="1600" height="900"></img>
+
+<details>
+  <summary>Technische Daten – Ferrari F40</summary>
+  <ul>
+    <li>Baujahr: 1987</li>
+    <li>Motor: 2.9L V8 Biturbo</li>
+    <li>Leistung: 478 PS</li>
+    <li>0–100 km/h: ca. 3,8 s</li>
+    <li>Höchstgeschwindigkeit: 324 km/h</li>
+    <li>Gewicht: ca. 1.100 kg</li>
+    <li>Antrieb: Heckantrieb</li>
+  </ul>
+</details>
+
+<p>Hier ist ein Video vom Ferrari F40</p>
+<iframe width="1600" height="900" src="https://www.youtube.com/embed/Vjd4NJaoxIs" title="Ferrari F40 Midnight Run | 4K Cinematic"
+frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+referrerpolicy="strict-origin-when-cross-origin"
+allowfullscreen></iframe>
+
+<h3><a href="https://www.mercedes-benz.de/" target="_blank" rel="noopener noreferrer">Mercedes-Benz</a></h3>
+
+<p>Hier ist ein Bild vom Mercedes-Benz 300SL</p>
+<img src="https://images.ctfassets.net/lmiyf1b7ib63/0mercedes-benz300s-image/5f0490bcf919083b9c8b19191ee41c32/0mercedes-benz300s-image.jpeg" width="1600" height="900">
+
+<details>
+  <summary>Technische Daten – Mercedes-Benz 300SL</summary>
+  <ul>
+    <li>Baujahr: 1954</li>
+    <li>Motor: 3.0L Reihensechszylinder</li>
+    <li>Leistung: 215 PS</li>
+    <li>0–100 km/h: ca. 8,8 s</li>
+    <li>Höchstgeschwindigkeit: 260 km/h</li>
+    <li>Gewicht: ca. 1.300 kg</li>
+    <li>Antrieb: Heckantrieb</li>
+  </ul>
+</details>
+
+<p>Hier ist ein Video vom Mercedes-Benz 300SL</p>
+<iframe width="1600" height="900" src="https://www.youtube.com/embed/7ztP87n6kbU" title="TARGA Tasmania 2022 - Mercedes Benz 300SL, Pure Sound"
+frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+referrerpolicy="strict-origin-when-cross-origin"
+allowfullscreen></iframe>
+
+<h3><a href="https://www.jaguar.com/" target="_blank" rel="noopener noreferrer">Jaguar</a></h3>
+
+<p>Hier ist ein Bild vom Jaguar E-Type</p>
+<img src="https://pistonaddict.com/wp-content/uploads/2022/05/Jaguar-E-Type-Series-1-scaled.jpg" width="1600" height="900">
+
+<details>
+  <summary>Technische Daten – Jaguar E-Type</summary>
+  <ul>
+    <li>Baujahr: 1961</li>
+    <li>Motor: 3.8L Reihensechszylinder</li>
+    <li>Leistung: 265 PS</li>
+    <li>0–100 km/h: ca. 6,9 s</li>
+    <li>Höchstgeschwindigkeit: 240 km/h</li>
+    <li>Gewicht: ca. 1.200 kg</li>
+    <li>Antrieb: Heckantrieb</li>
+  </ul>
+</details>
+
+<p>Hier ist ein Video vom Jaguar E-Type</p>
+<iframe width="1600" height="900" src="https://www.youtube.com/embed/hvfwPW2rfug" title="This 4.2L British Icon SOUNDS INCREDIBLE - 1967 Jaguar XKE Series 1 Coupe POV Drive (Binaural Audio)"
+frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+referrerpolicy="strict-origin-when-cross-origin"
+allowfullscreen></iframe>
+
+<p></p>
+<button id="goTopBtn" title="Nach oben scrollen">Go to Top</button>
+
+</body>
+
+</html> 
