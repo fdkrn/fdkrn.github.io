@@ -3,37 +3,61 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- Chart.js for simple charts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>My Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Dashboard</h1>
 
-    <div class="tabs">
-      <div class="tab active" onclick="showTab('stocks')">Stocks</div>
-      <div class="tab" onclick="showTab('weather')">Weather</div>
+  <!-- 🔥 Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="images/logo.png" alt="Logo" />
+      <span>My Dashboard</span>
     </div>
+    <ul class="nav-links">
+      <li><a href="#stocks">Stocks</a></li>
+      <li><a href="#weather">Weather</a></li>
+      <li><a href="#news">News</a></li>
+      <li><a href="#calculator">Calculator</a></li>
+    </ul>
+  </nav>
 
-    <div id="stocks" class="tab-content active">
-      <div class="card">
-        <h2>Stock Market Trends</h2>
-        <p>Current market highlights, latest changes and detailed value trends over the week.</p>
-        <canvas id="stockChart"></canvas>
-      </div>
-    </div>
+  <!-- 📈 Stocks Section -->
+  <section id="stocks" class="section">
+    <h2>Stock Market Trends</h2>
+    <canvas id="stocksChart"></canvas>
+    <div id="stocksSummary"></div>
+  </section>
 
-    <div id="weather" class="tab-content">
-      <div class="card">
-        <h2>Weather Projections</h2>
-        <p>Upcoming temperature trends and forecasts for the next days.</p>
-        <canvas id="weatherChart"></canvas>
-      </div>
-    </div>
-  </div>
+  <!-- ☀️ Weather Section -->
+  <section id="weather" class="section">
+    <h2>Weather Forecast</h2>
+    <canvas id="weatherChart"></canvas>
+    <div id="weatherSummary"></div>
+  </section>
 
-  <script src="script.js"></script>
+  <!-- 📰 News Section -->
+  <section id="news" class="section">
+    <h2>Latest Financial & Weather News</h2>
+    <div id="newsFeed"></div>
+  </section>
+
+  <!-- 💰 Calculator Section -->
+  <section id="calculator" class="section">
+    <h2>Investment Calculator</h2>
+    <form id="investmentForm">
+      <label for="stockSymbol">Stock Symbol:</label>
+      <input type="text" id="stockSymbol" placeholder="AAPL" required />
+      <label for="amount">Amount ($):</label>
+      <input type="number" id="amount" required />
+      <label for="date">Date:</label>
+      <input type="date" id="date" required />
+      <button type="submit">Calculate</button>
+    </form>
+    <div id="calcResult"></div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
