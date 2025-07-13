@@ -2,60 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>My Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-  <!-- 🔥 Navbar -->
   <nav class="navbar">
     <div class="logo">
       <img src="images/logo.png" alt="Logo" />
       <span>My Dashboard</span>
     </div>
-    <ul class="nav-links">
-      <li><a href="#stocks">Stocks</a></li>
-      <li><a href="#weather">Weather</a></li>
-      <li><a href="#news">News</a></li>
-      <li><a href="#calculator">Calculator</a></li>
+    <ul class="tabs">
+      <li class="tab active" data-tab="stocks">Stocks</li>
+      <li class="tab" data-tab="weather">Weather</li>
+      <li class="tab" data-tab="news">News</li>
     </ul>
   </nav>
 
-  <!-- 📈 Stocks Section -->
-  <section id="stocks" class="section">
-    <h2>Stock Market Trends</h2>
-    <canvas id="stocksChart"></canvas>
-    <div id="stocksSummary"></div>
-  </section>
+  <main class="content">
 
-  <!-- ☀️ Weather Section -->
-  <section id="weather" class="section">
-    <h2>Weather Forecast</h2>
-    <canvas id="weatherChart"></canvas>
-    <div id="weatherSummary"></div>
-  </section>
+    <!-- Stocks tab -->
+    <section id="stocks" class="tab-content active">
+      <h2>Stock Market Trends</h2>
+      <div class="chart-container">
+        <canvas id="stocksChart"></canvas>
+      </div>
+      <div id="stocksSummary" class="summary-box"></div>
 
-  <!-- 📰 News Section -->
-  <section id="news" class="section">
-    <h2>Latest Financial & Weather News</h2>
-    <div id="newsFeed"></div>
-  </section>
+      <div class="calculator-box">
+        <h3>Investment Calculator</h3>
+        <form id="investmentForm">
+          <label for="stockSymbol">Stock Symbol:</label>
+          <input type="text" id="stockSymbol" placeholder="AAPL" required />
+          <label for="amount">Amount ($):</label>
+          <input type="number" id="amount" min="1" required />
+          <label for="date">Date:</label>
+          <input type="date" id="date" required />
+          <button type="submit">Calculate</button>
+        </form>
+        <div id="calcResult"></div>
+      </div>
+    </section>
 
-  <!-- 💰 Calculator Section -->
-  <section id="calculator" class="section">
-    <h2>Investment Calculator</h2>
-    <form id="investmentForm">
-      <label for="stockSymbol">Stock Symbol:</label>
-      <input type="text" id="stockSymbol" placeholder="AAPL" required />
-      <label for="amount">Amount ($):</label>
-      <input type="number" id="amount" required />
-      <label for="date">Date:</label>
-      <input type="date" id="date" required />
-      <button type="submit">Calculate</button>
-    </form>
-    <div id="calcResult"></div>
-  </section>
+    <!-- Weather tab -->
+    <section id="weather" class="tab-content">
+      <h2>Weather Forecast</h2>
+      <div class="chart-container">
+        <canvas id="weatherChart"></canvas>
+      </div>
+      <div id="weatherSummary" class="summary-box"></div>
+    </section>
+
+    <!-- News tab -->
+    <section id="news" class="tab-content">
+      <h2>Latest Financial & Weather News</h2>
+      <div id="newsFeed"></div>
+    </section>
+
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="js/script.js"></script>
