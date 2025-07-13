@@ -83,24 +83,25 @@ function setupStockChart() {
 }
 
 async function fetchStockData(symbol = 'AAPL') {
-  const ALPHA_VANTAGE_API_KEY = '7DG5SKZI0K88BFC4'; // replace with your actual key
-
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=compact&apikey=${ALPHA_VANTAGE_API_KEY}`;
-
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1mo`;
   try {
     const res = await fetch(url);
     const data = await res.json();
+    console.log('Yahoo API response:', data);
 
-    if (data['Error Message'] || !data['Time Series (Daily)']) {
-      throw new Error('Invalid symbol or API limit reached');
+    if (!data.chart || !data.chart.result) {
+      throw new Error('Invalid symbol or data not found');
     }
 
-    const timeSeries = data['Time Series (Daily)'];
-    const dates = Object.keys(timeSeries).sort(); // ascending order
-    const last30Dates = dates.slice(-30);
+    const result = data.chart.result[0];
+    const timestamps = result.timestamp;
+    const prices = result.indicators.quote[0].close;
 
-    const labels = last30Dates;
-    const prices = last30Dates.map(date => parseFloat(timeSeries[date]['4. close']));
+    // Convert timestamps to readable dates
+    const labels = timestamps.map(ts => {
+      const date = new Date(ts * 1000);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    });
 
     return { labels, prices };
   } catch (error) {
@@ -108,7 +109,6 @@ async function fetchStockData(symbol = 'AAPL') {
     return null;
   }
 }
-
 async function updateStockChart(symbol = 'AAPL') {
   const stockData = await fetchStockData(symbol);
 
