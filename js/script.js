@@ -1,20 +1,19 @@
+let stocksChart, weatherChart;
+
 document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
   setupStockChart();
   setupWeatherChart();
-  let weatherChartInstance = null;
   loadNews();
   setupCalculator();
-  setupWeatherChart();
-  const stockSelect = document.getElementById('stockSelect');
 
-// Fetch new stock data when user selects a different symbol
-stockSelect.addEventListener('change', () => {
-  const selectedSymbol = stockSelect.value;
-  if (selectedSymbol) {
-    updateStockChart(selectedSymbol);
-  }
-});
+  const stockSelect = document.getElementById('stockSelect');
+  stockSelect.addEventListener('change', () => {
+    const selectedSymbol = stockSelect.value;
+    if (selectedSymbol) {
+      updateStockChart(selectedSymbol);
+    }
+  });
 });
 
 // Tab switching logic
@@ -32,10 +31,7 @@ function setupTabs() {
   });
 }
 
-let stocksChart, weatherChart;
-
-function setupStockChart() {
-  const ALPHA_VANTAGE_API_KEY = '7DG5SKZI0K88BFC4'; // replace with your real key
+const ALPHA_VANTAGE_API_KEY = '7DG5SKZI0K88BFC4'; // Replace with your actual key
 
 async function fetchStockData(symbol = 'AAPL') {
   const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=compact&apikey=${ALPHA_VANTAGE_API_KEY}`;
@@ -48,7 +44,6 @@ async function fetchStockData(symbol = 'AAPL') {
       throw new Error('Invalid symbol or API limit reached');
     }
 
-    // Parse dates and closing prices, limited to last 30 days
     const timeSeries = data['Time Series (Daily)'];
     const dates = Object.keys(timeSeries).sort(); // ascending order (oldest to newest)
     const last30Dates = dates.slice(-30);
@@ -78,13 +73,50 @@ async function updateStockChart(symbol = 'AAPL') {
   document.getElementById('stocksSummary').textContent = `Showing last 30 days of ${symbol} closing prices.`;
 }
 
+function setupStockChart() {
+  const ctx = document.getElementById('stocksChart').getContext('2d');
+
+  stocksChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Stock Price',
+        data: [],
+        borderColor: '#00bcd4',
+        backgroundColor: 'rgba(0, 188, 212, 0.2)',
+        fill: true,
+        tension: 0.3,
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          ticks: { color: '#aaa' },
+          grid: { color: '#222' },
+        },
+        y: {
+          ticks: { color: '#aaa' },
+          grid: { color: '#222' },
+          beginAtZero: false
+        }
+      },
+      plugins: {
+        legend: { display: true },
+        tooltip: { enabled: true }
+      }
+    }
+  });
+
+  updateStockChart('AAPL'); // Load initial stock data for Apple
 }
 
 function setupWeatherChart() {
   const ctx = document.getElementById('weatherChart').getContext('2d');
 
-if (weatherChartInstance) {
-    weatherChartInstance.destroy();
+  if (weatherChart) {
+    weatherChart.destroy();
   }
 
   weatherChart = new Chart(ctx, {
@@ -130,7 +162,6 @@ if (weatherChartInstance) {
 
 function loadNews() {
   const newsFeed = document.getElementById('newsFeed');
-  // Demo static news items
   const newsItems = [
     { title: 'Stock Market hits new highs', date: '2025-07-12' },
     { title: 'Storm warning issued for West Coast', date: '2025-07-11' },
