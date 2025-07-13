@@ -1,13 +1,20 @@
-let stocksChart, weatherChart;
+let stocksChart = null;
+let weatherChartInstance = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
-  setupStockChart();
-  setupWeatherChart();
+
+  setupStockChart();          // initialize stocksChart
+  updateStockChart('AAPL');   // load default stock data
+
+  setupWeatherChart();        // setup weather chart once
+
   loadNews();
   setupCalculator();
 
   const stockSelect = document.getElementById('stockSelect');
+
+  // Update stock chart when user selects a different symbol
   stockSelect.addEventListener('change', () => {
     const selectedSymbol = stockSelect.value;
     if (selectedSymbol) {
@@ -31,9 +38,53 @@ function setupTabs() {
   });
 }
 
-const ALPHA_VANTAGE_API_KEY = '7DG5SKZI0K88BFC4'; // Replace with your actual key
+// Initialize empty stocksChart for later updates
+function setupStockChart() {
+  const ctx = document.getElementById('stocksChart').getContext('2d');
+
+  stocksChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],      // empty for now
+      datasets: [{
+        label: '',
+        data: [],
+        borderColor: '#007bff',
+        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+        fill: true,
+        tension: 0.2,
+        pointRadius: 0,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { 
+          ticks: { color: '#aaa' },
+          grid: { display: false }
+        },
+        y: {
+          ticks: { color: '#aaa' },
+          grid: { color: '#222' },
+          beginAtZero: false
+        }
+      },
+      plugins: {
+        legend: { display: true }
+      },
+      animation: {
+        duration: 500,
+        easing: 'easeOutQuart'
+      }
+    }
+  });
+}
 
 async function fetchStockData(symbol = 'AAPL') {
+  const ALPHA_VANTAGE_API_KEY = '7DG5SKZI0K88BFC4'; // replace with your actual key
+
   const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=compact&apikey=${ALPHA_VANTAGE_API_KEY}`;
 
   try {
@@ -45,7 +96,7 @@ async function fetchStockData(symbol = 'AAPL') {
     }
 
     const timeSeries = data['Time Series (Daily)'];
-    const dates = Object.keys(timeSeries).sort(); // ascending order (oldest to newest)
+    const dates = Object.keys(timeSeries).sort(); // ascending order
     const last30Dates = dates.slice(-30);
 
     const labels = last30Dates;
@@ -60,8 +111,9 @@ async function fetchStockData(symbol = 'AAPL') {
 
 async function updateStockChart(symbol = 'AAPL') {
   const stockData = await fetchStockData(symbol);
+
   if (!stockData) {
-    alert('Failed to fetch stock data.');
+    alert('Failed to fetch stock data or API limit reached.');
     return;
   }
 
@@ -73,53 +125,14 @@ async function updateStockChart(symbol = 'AAPL') {
   document.getElementById('stocksSummary').textContent = `Showing last 30 days of ${symbol} closing prices.`;
 }
 
-function setupStockChart() {
-  const ctx = document.getElementById('stocksChart').getContext('2d');
-
-  stocksChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [],
-      datasets: [{
-        label: 'Stock Price',
-        data: [],
-        borderColor: '#00bcd4',
-        backgroundColor: 'rgba(0, 188, 212, 0.2)',
-        fill: true,
-        tension: 0.3,
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: {
-          ticks: { color: '#aaa' },
-          grid: { color: '#222' },
-        },
-        y: {
-          ticks: { color: '#aaa' },
-          grid: { color: '#222' },
-          beginAtZero: false
-        }
-      },
-      plugins: {
-        legend: { display: true },
-        tooltip: { enabled: true }
-      }
-    }
-  });
-
-  updateStockChart('AAPL'); // Load initial stock data for Apple
-}
-
 function setupWeatherChart() {
   const ctx = document.getElementById('weatherChart').getContext('2d');
 
-  if (weatherChart) {
-    weatherChart.destroy();
+  if (weatherChartInstance) {
+    weatherChartInstance.destroy();
   }
 
-  weatherChart = new Chart(ctx, {
+  weatherChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -162,6 +175,7 @@ function setupWeatherChart() {
 
 function loadNews() {
   const newsFeed = document.getElementById('newsFeed');
+
   const newsItems = [
     { title: 'Stock Market hits new highs', date: '2025-07-12' },
     { title: 'Storm warning issued for West Coast', date: '2025-07-11' },
@@ -173,7 +187,6 @@ function loadNews() {
   ).join('');
 }
 
-// Calculator inside Stocks tab
 function setupCalculator() {
   const form = document.getElementById('investmentForm');
   const resultDiv = document.getElementById('calcResult');
