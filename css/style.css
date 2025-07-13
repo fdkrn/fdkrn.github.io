@@ -208,3 +208,29 @@ canvas {
   color: #00bcd4;
   font-weight: 700;
 }
+
+.stock-search label {
+  color: #ccc;
+  font-size: 1rem;
+  margin-right: 10px;
+}
+
+.stock-search select {
+  background-color: #222;
+  color: #eee;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  appearance: none; /* remove default arrow for custom look */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stock-search select:hover,
+.stock-search select:focus {
+  border-color: #666;
+  outline: none;
+}
