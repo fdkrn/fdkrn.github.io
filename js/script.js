@@ -4,6 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
   setupWeatherChart();
   loadNews();
   setupCalculator();
+  setupWeatherChart();
+  document.getElementById('stockSearchBtn').addEventListener('click', () => {
+    const symbol = document.getElementById('stockSearchInput').value.trim().toUpperCase();
+    if(symbol) {
+      updateStockChart(symbol);
+    }
+  });
 });
 
 // Tab switching logic
@@ -24,69 +31,49 @@ function setupTabs() {
 let stocksChart, weatherChart;
 
 function setupStockChart() {
-  const ctx = document.getElementById('stocksChart').getContext('2d');
+  const ALPHA_VANTAGE_API_KEY = '7DG5SKZI0K88BFC4'; // replace with your real key
 
-  stocksChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      datasets: [{
-        label: 'AAPL Stock Price',
-        data: [135, 142, 138, 150, 155, 160],
-        borderColor: '#00bcd4',
-        backgroundColor: 'rgba(0, 188, 212, 0.2)',
-        fill: true,
-        tension: 0.35,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        borderWidth: 3,
-        borderCapStyle: 'round',
-        borderJoinStyle: 'round',
-        cubicInterpolationMode: 'monotone'
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-      plugins: {
-        legend: { labels: { color: '#00bcd4' } },
-        tooltip: { enabled: true }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#aaa' },
-          grid: { color: '#222' }
-        },
-        y: {
-          ticks: { color: '#aaa' },
-          grid: { color: '#222' },
-          beginAtZero: false
-        }
-      },
-      elements: {
-        line: {
-          borderCapStyle: 'round',
-          borderJoinStyle: 'round',
-        },
-        point: {
-          borderWidth: 2,
-          borderColor: '#00bcd4',
-          backgroundColor: '#121212'
-        }
-      },
-      animation: {
-        duration: 600,
-        easing: 'easeOutQuart'
-      }
+async function fetchStockData(symbol = 'AAPL') {
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=compact&apikey=${ALPHA_VANTAGE_API_KEY}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data['Error Message'] || !data['Time Series (Daily)']) {
+      throw new Error('Invalid symbol or API limit reached');
     }
-  });
 
-  // Summary text
-  document.getElementById('stocksSummary').textContent = 'Sample AAPL stock data (Jan-Jun 2025).';
+    // Parse dates and closing prices, limited to last 30 days
+    const timeSeries = data['Time Series (Daily)'];
+    const dates = Object.keys(timeSeries).sort(); // ascending order (oldest to newest)
+    const last30Dates = dates.slice(-30);
+
+    const labels = last30Dates;
+    const prices = last30Dates.map(date => parseFloat(timeSeries[date]['4. close']));
+
+    return { labels, prices };
+  } catch (error) {
+    console.error('Fetch stock data error:', error);
+    return null;
+  }
+}
+
+async function updateStockChart(symbol = 'AAPL') {
+  const stockData = await fetchStockData(symbol);
+  if (!stockData) {
+    alert('Failed to fetch stock data.');
+    return;
+  }
+
+  stocksChart.data.labels = stockData.labels;
+  stocksChart.data.datasets[0].data = stockData.prices;
+  stocksChart.data.datasets[0].label = `${symbol} Stock Price`;
+  stocksChart.update();
+
+  document.getElementById('stocksSummary').textContent = `Showing last 30 days of ${symbol} closing prices.`;
+}
+
 }
 
 function setupWeatherChart() {

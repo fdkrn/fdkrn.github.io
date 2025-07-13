@@ -21,6 +21,11 @@
 
   <main>
     <section id="stocks" class="tab-content active">
+      <div class="stock-search">
+        <label for="stockSearchInput">Enter Stock Symbol:</label>
+        <input type="text" id="stockSearchInput" placeholder="AAPL" maxlength="5" />
+        <button id="stockSearchBtn">Load</button>
+      </div>
       <h2>Stock Market Trends</h2>
       <div class="chart-wrapper">
         <canvas id="stocksChart"></canvas>
