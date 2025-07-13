@@ -14,7 +14,6 @@ stockSelect.addEventListener('change', () => {
     updateStockChart(selectedSymbol);
   }
 });
-  updateStockChart(stockSelect.value || 'AAPL');
 });
 
 // Tab switching logic
