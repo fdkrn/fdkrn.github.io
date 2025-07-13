@@ -209,6 +209,10 @@ canvas {
   font-weight: 700;
 }
 
+.stock-search {
+  margin-bottom: 20px;
+}
+
 .stock-search label {
   color: #ccc;
   font-size: 1rem;
@@ -222,7 +226,7 @@ canvas {
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 1rem;
-  appearance: none; /* remove default arrow for custom look */
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
