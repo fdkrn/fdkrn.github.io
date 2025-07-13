@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
   setupStockChart();
   setupWeatherChart();
+  let weatherChartInstance = null;
   loadNews();
   setupCalculator();
   setupWeatherChart();
@@ -81,6 +82,10 @@ async function updateStockChart(symbol = 'AAPL') {
 
 function setupWeatherChart() {
   const ctx = document.getElementById('weatherChart').getContext('2d');
+
+if (weatherChartInstance) {
+    weatherChartInstance.destroy();
+  }
 
   weatherChart = new Chart(ctx, {
     type: 'bar',
