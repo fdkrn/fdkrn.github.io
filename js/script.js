@@ -13,18 +13,14 @@ function setupTabs() {
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      // Remove active from all tabs and contents
       tabs.forEach(t => t.classList.remove('active'));
       contents.forEach(c => c.classList.remove('active'));
-
-      // Add active to clicked tab and corresponding content
       tab.classList.add('active');
       document.getElementById(tab.dataset.tab).classList.add('active');
     });
   });
 }
 
-// Chart.js instances
 let stocksChart, weatherChart;
 
 function setupStockChart() {
@@ -36,27 +32,29 @@ function setupStockChart() {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       datasets: [{
         label: 'AAPL Stock Price',
-        data: [130, 135, 125, 140, 150, 145],
+        data: [135, 142, 138, 150, 155, 160],
         borderColor: '#00bcd4',
-        backgroundColor: 'rgba(0,188,212,0.3)',
+        backgroundColor: 'rgba(0, 188, 212, 0.2)',
         fill: true,
-        tension: 0.4,
+        tension: 0.35,
         pointRadius: 5,
         pointHoverRadius: 7,
         borderWidth: 3,
+        borderCapStyle: 'round',
         borderJoinStyle: 'round',
+        cubicInterpolationMode: 'monotone'
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
       plugins: {
-        tooltip: {
-          mode: 'index',
-          intersect: false,
-        },
-        legend: {
-          labels: { color: '#00bcd4' }
-        }
+        legend: { labels: { color: '#00bcd4' } },
+        tooltip: { enabled: true }
       },
       scales: {
         x: {
@@ -75,23 +73,20 @@ function setupStockChart() {
           borderJoinStyle: 'round',
         },
         point: {
-          hoverBorderWidth: 3,
-          hoverRadius: 7,
-          radius: 5,
           borderWidth: 2,
           borderColor: '#00bcd4',
           backgroundColor: '#121212'
         }
       },
       animation: {
-        duration: 700,
+        duration: 600,
         easing: 'easeOutQuart'
       }
     }
   });
 
-  // Summary text for stocks
-  document.getElementById('stocksSummary').textContent = 'AAPL stock prices for first half of 2025. Smooth trendline with rounded corners.';
+  // Summary text
+  document.getElementById('stocksSummary').textContent = 'Sample AAPL stock data (Jan-Jun 2025).';
 }
 
 function setupWeatherChart() {
@@ -102,16 +97,17 @@ function setupWeatherChart() {
     data: {
       labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       datasets: [{
-        label: 'Temperature (°C)',
+        label: 'Temp (°C)',
         data: [22, 24, 19, 23, 25, 20, 21],
         backgroundColor: '#00bcd4',
-        borderRadius: 12,
+        borderRadius: 10,
         barPercentage: 0.6,
         borderSkipped: false,
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
         tooltip: { enabled: true }
@@ -134,13 +130,12 @@ function setupWeatherChart() {
     }
   });
 
-  // Summary text for weather
-  document.getElementById('weatherSummary').textContent = 'Weekly temperature forecast with rounded bar charts.';
+  document.getElementById('weatherSummary').textContent = 'Weekly temperature forecast.';
 }
 
 function loadNews() {
   const newsFeed = document.getElementById('newsFeed');
-  // Example static news for demo
+  // Demo static news items
   const newsItems = [
     { title: 'Stock Market hits new highs', date: '2025-07-12' },
     { title: 'Storm warning issued for West Coast', date: '2025-07-11' },
@@ -152,7 +147,7 @@ function loadNews() {
   ).join('');
 }
 
-// Investment calculator
+// Calculator inside Stocks tab
 function setupCalculator() {
   const form = document.getElementById('investmentForm');
   const resultDiv = document.getElementById('calcResult');
@@ -160,16 +155,15 @@ function setupCalculator() {
   form.addEventListener('submit', e => {
     e.preventDefault();
 
-    const symbol = form.stockSymbol.value.trim().toUpperCase();
-    const amount = parseFloat(form.amount.value);
-    const date = form.date.value;
+    const symbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+    const amount = parseFloat(document.getElementById('amount').value);
+    const date = document.getElementById('date').value;
 
     if (!symbol || isNaN(amount) || amount <= 0 || !date) {
       resultDiv.textContent = 'Please enter valid input.';
       return;
     }
 
-    // Dummy calculation: assume 10% annual return compounded monthly from chosen date to now
     const startDate = new Date(date);
     const now = new Date();
 

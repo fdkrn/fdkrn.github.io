@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>My Dashboard</title>
+  <title>Interactive Dashboard</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-
   <nav class="navbar">
     <div class="logo">
       <img src="images/logo.png" alt="Logo" />
@@ -20,12 +19,10 @@
     </ul>
   </nav>
 
-  <main class="content">
-
-    <!-- Stocks tab -->
+  <main>
     <section id="stocks" class="tab-content active">
       <h2>Stock Market Trends</h2>
-      <div class="chart-container">
+      <div class="chart-wrapper">
         <canvas id="stocksChart"></canvas>
       </div>
       <div id="stocksSummary" class="summary-box"></div>
@@ -45,21 +42,18 @@
       </div>
     </section>
 
-    <!-- Weather tab -->
     <section id="weather" class="tab-content">
       <h2>Weather Forecast</h2>
-      <div class="chart-container">
+      <div class="chart-wrapper">
         <canvas id="weatherChart"></canvas>
       </div>
       <div id="weatherSummary" class="summary-box"></div>
     </section>
 
-    <!-- News tab -->
     <section id="news" class="tab-content">
       <h2>Latest Financial & Weather News</h2>
       <div id="newsFeed"></div>
     </section>
-
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

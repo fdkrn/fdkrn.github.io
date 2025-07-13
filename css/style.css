@@ -1,4 +1,4 @@
-/* Reset & basics */
+/* Reset */
 * {
   box-sizing: border-box;
 }
@@ -11,6 +11,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -19,9 +20,9 @@ body {
   padding: 1rem 2rem;
   position: sticky;
   top: 0;
-  z-index: 1000;
   border-bottom: 1px solid #333;
   user-select: none;
+  z-index: 10;
 }
 
 .logo {
@@ -29,12 +30,12 @@ body {
   align-items: center;
   gap: 10px;
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   color: #00bcd4;
 }
 
 .logo img {
-  height: 30px;
+  height: 28px;
   border-radius: 6px;
   box-shadow: 0 0 5px #00bcd4;
 }
@@ -42,45 +43,47 @@ body {
 .tabs {
   list-style: none;
   display: flex;
-  gap: 2rem;
+  gap: 1.8rem;
   padding: 0;
   margin: 0;
 }
 
 .tabs .tab {
   cursor: pointer;
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 1rem;
   font-weight: 600;
   border-radius: 30px;
   transition: background-color 0.3s, color 0.3s;
   color: #888;
+  user-select: none;
 }
 
 .tabs .tab.active {
   background-color: #00bcd4;
   color: #121212;
-  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+  box-shadow: 0 4px 10px rgba(0, 188, 212, 0.5);
 }
 
-.content {
-  padding: 2rem 3rem;
-  max-width: 900px;
+/* Main content */
+main {
+  padding: 1.5rem 2.5rem;
+  max-width: 850px;
   margin: 0 auto;
 }
 
-/* Hide inactive tab contents */
+/* Tab content */
 .tab-content {
   display: none;
-  animation: fadeIn 0.3s ease forwards;
 }
 
 .tab-content.active {
   display: block;
+  animation: fadeIn 0.25s ease forwards;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px);}
-  to { opacity: 1; transform: translateY(0);}
+  from {opacity: 0; transform: translateY(5px);}
+  to {opacity: 1; transform: translateY(0);}
 }
 
 h2 {
@@ -89,36 +92,44 @@ h2 {
   color: #00bcd4;
 }
 
-.chart-container {
-  background: #1c1c1c;
-  padding: 1rem;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+/* Chart wrapper smaller & centered */
+.chart-wrapper {
+  max-width: 700px;
   margin-bottom: 1rem;
+  background: #1c1c1c;
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.7);
 }
 
 canvas {
-  border-radius: 15px !important;
+  border-radius: 12px !important;
+  max-height: 320px !important;
+  width: 100% !important;
+  height: auto !important;
 }
 
+/* Summary box */
 .summary-box {
   background-color: #222;
-  padding: 1rem;
+  padding: 1rem 1.2rem;
   border-radius: 15px;
   font-size: 0.9rem;
   color: #ccc;
   box-shadow: inset 0 0 10px #000;
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
 }
 
-/* Calculator styles */
+/* Calculator */
 .calculator-box {
   background-color: #222;
-  padding: 1.5rem 2rem;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0,188,212,0.3);
+  padding: 1.4rem 2rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0,188,212,0.25);
   color: #ddd;
   font-size: 1rem;
+  max-width: 700px;
+  margin-bottom: 2rem;
 }
 
 .calculator-box h3 {
@@ -129,12 +140,12 @@ canvas {
 
 .calculator-box label {
   display: block;
-  margin: 0.75rem 0 0.3rem;
+  margin: 0.65rem 0 0.3rem;
 }
 
 .calculator-box input {
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.45rem 0.65rem;
   border-radius: 12px;
   border: none;
   background: #1a1a1a;
@@ -150,17 +161,17 @@ canvas {
 }
 
 .calculator-box button {
-  margin-top: 1.2rem;
+  margin-top: 1.1rem;
   width: 100%;
-  padding: 0.75rem;
-  border-radius: 20px;
+  padding: 0.7rem;
+  border-radius: 22px;
   border: none;
   background-color: #00bcd4;
   color: #121212;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   cursor: pointer;
-  box-shadow: 0 6px 12px rgba(0,188,212,0.6);
+  box-shadow: 0 6px 12px rgba(0,188,212,0.5);
   transition: background-color 0.3s ease;
 }
 
@@ -174,15 +185,26 @@ canvas {
   color: #88e7f7;
 }
 
-/* Scrollbar (optional) */
-::-webkit-scrollbar {
-  width: 8px;
+/* News feed */
+#newsFeed {
+  background: #1f1f1f;
+  padding: 1rem 1.3rem;
+  border-radius: 16px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.7);
+  max-width: 700px;
 }
-::-webkit-scrollbar-track {
-  background: #222;
+
+.news-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #333;
+  color: #ccc;
 }
-::-webkit-scrollbar-thumb {
-  background-color: #00bcd4;
-  border-radius: 10px;
-  border: 2px solid #222;
+
+.news-item:last-child {
+  border-bottom: none;
+}
+
+.news-item strong {
+  color: #00bcd4;
+  font-weight: 700;
 }
