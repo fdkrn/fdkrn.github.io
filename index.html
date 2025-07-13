@@ -22,10 +22,61 @@
   <main>
     <section id="stocks" class="tab-content active">
       <div class="stock-search">
-        <label for="stockSearchInput">Enter Stock Symbol:</label>
-        <input type="text" id="stockSearchInput" placeholder="AAPL" maxlength="5" />
-        <button id="stockSearchBtn">Load</button>
-      </div>
+  <label for="stockSelect">Select Stock Symbol:</label>
+  <select id="stockSelect">
+    <optgroup label="America">
+      <option value="AAPL">Apple (AAPL)</option>
+      <option value="MSFT">Microsoft (MSFT)</option>
+      <option value="GOOGL">Alphabet (GOOGL)</option>
+      <option value="AMZN">Amazon (AMZN)</option>
+      <option value="TSLA">Tesla (TSLA)</option>
+      <option value="FB">Meta (FB)</option>
+      <option value="NVDA">NVIDIA (NVDA)</option>
+      <option value="JPM">JPMorgan (JPM)</option>
+      <option value="V">Visa (V)</option>
+      <option value="WMT">Walmart (WMT)</option>
+      <option value="DIS">Disney (DIS)</option>
+      <option value="BAC">Bank of America (BAC)</option>
+      <option value="MA">Mastercard (MA)</option>
+      <option value="NFLX">Netflix (NFLX)</option>
+      <option value="PYPL">PayPal (PYPL)</option>
+    </optgroup>
+    <optgroup label="Europe">
+      <option value="SIE.DE">Siemens (SIE.DE)</option>
+      <option value="SAP.DE">SAP (SAP.DE)</option>
+      <option value="ASML.AS">ASML (ASML.AS)</option>
+      <option value="RDSA.AS">Shell (RDSA.AS)</option>
+      <option value="BAS.DE">BASF (BAS.DE)</option>
+      <option value="AIR.PA">Airbus (AIR.PA)</option>
+      <option value="BNP.PA">BNP Paribas (BNP.PA)</option>
+      <option value="SAN.PA">Sanofi (SAN.PA)</option>
+      <option value="DTE.DE">Deutsche Telekom (DTE.DE)</option>
+      <option value="OR.PA">L’Oréal (OR.PA)</option>
+      <option value="MC.PA">LVMH (MC.PA)</option>
+      <option value="VOW3.DE">Volkswagen (VOW3.DE)</option>
+      <option value="DBK.DE">Deutsche Bank (DBK.DE)</option>
+      <option value="ENEL.MI">Enel (ENEL.MI)</option>
+      <option value="BAYN.DE">Bayer (BAYN.DE)</option>
+    </optgroup>
+    <optgroup label="Asia">
+      <option value="9984.T">SoftBank (9984.T)</option>
+      <option value="7203.T">Toyota (7203.T)</option>
+      <option value="6758.T">Sony (6758.T)</option>
+      <option value="0005.HK">HSBC (0005.HK)</option>
+      <option value="0939.HK">China Construction Bank (0939.HK)</option>
+      <option value="6861.T">Keyence (6861.T)</option>
+      <option value="8316.T">Sumitomo Mitsui (8316.T)</option>
+      <option value="005930.KS">Samsung Electronics (005930.KS)</option>
+      <option value="9983.T">Fast Retailing (9983.T)</option>
+      <option value="0700.HK">Tencent (0700.HK)</option>
+      <option value="601398.SS">ICBC (601398.SS)</option>
+      <option value="6502.T">Hitachi (6502.T)</option>
+      <option value="6752.T">Panasonic (6752.T)</option>
+      <option value="8035.T">Tokyo Electron (8035.T)</option>
+      <option value="6367.T">Daikin (6367.T)</option>
+    </optgroup>
+  </select>
+</div>
       <h2>Stock Market Trends</h2>
       <div class="chart-wrapper">
         <canvas id="stocksChart"></canvas>

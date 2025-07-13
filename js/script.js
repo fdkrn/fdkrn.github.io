@@ -5,12 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
   loadNews();
   setupCalculator();
   setupWeatherChart();
-  document.getElementById('stockSearchBtn').addEventListener('click', () => {
-    const symbol = document.getElementById('stockSearchInput').value.trim().toUpperCase();
-    if(symbol) {
-      updateStockChart(symbol);
-    }
-  });
+  const stockSelect = document.getElementById('stockSelect');
+
+// Fetch new stock data when user selects a different symbol
+stockSelect.addEventListener('change', () => {
+  const selectedSymbol = stockSelect.value;
+  if (selectedSymbol) {
+    updateStockChart(selectedSymbol);
+  }
+});
+  updateStockChart(stockSelect.value || 'AAPL');
 });
 
 // Tab switching logic
