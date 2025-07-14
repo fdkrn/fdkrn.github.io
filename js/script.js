@@ -1,29 +1,23 @@
-let stocksChart = null;
-let weatherChartInstance = null;
-
 document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
-
-  setupStockChart();          // initialize stocksChart
-  updateStockChart('AAPL');   // load default stock data
-
-  setupWeatherChart();        // setup weather chart once
-
+  setupStockChart();
+  setupWeatherChart();
   loadNews();
   setupCalculator();
 
   const stockSelect = document.getElementById('stockSelect');
-
-  // Update stock chart when user selects a different symbol
   stockSelect.addEventListener('change', () => {
     const selectedSymbol = stockSelect.value;
     if (selectedSymbol) {
       updateStockChart(selectedSymbol);
     }
   });
+
+  // Load initial stock chart
+  updateStockChart('AAPL');
 });
 
-// Tab switching logic
+// Tab switching
 function setupTabs() {
   const tabs = document.querySelectorAll('.tab');
   const contents = document.querySelectorAll('.tab-content');
@@ -38,52 +32,12 @@ function setupTabs() {
   });
 }
 
-// Initialize empty stocksChart for later updates
-function setupStockChart() {
-  const ctx = document.getElementById('stocksChart').getContext('2d');
+let stocksChart, weatherChart;
 
-  stocksChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [],      // empty for now
-      datasets: [{
-        label: '',
-        data: [],
-        borderColor: '#007bff',
-        backgroundColor: 'rgba(0, 123, 255, 0.2)',
-        fill: true,
-        tension: 0.2,
-        pointRadius: 0,
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: { 
-          ticks: { color: '#aaa' },
-          grid: { display: false }
-        },
-        y: {
-          ticks: { color: '#aaa' },
-          grid: { color: '#222' },
-          beginAtZero: false
-        }
-      },
-      plugins: {
-        legend: { display: true }
-      },
-      animation: {
-        duration: 500,
-        easing: 'easeOutQuart'
-      }
-    }
-  });
-}
-
+// Stocks with Yahoo Finance
 async function fetchStockData(symbol = 'AAPL') {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1mo`;
+
   try {
     const res = await fetch(url);
     const data = await res.json();
@@ -97,10 +51,9 @@ async function fetchStockData(symbol = 'AAPL') {
     const timestamps = result.timestamp;
     const prices = result.indicators.quote[0].close;
 
-    // Convert timestamps to readable dates
     const labels = timestamps.map(ts => {
       const date = new Date(ts * 1000);
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+      return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
     });
 
     return { labels, prices };
@@ -109,11 +62,40 @@ async function fetchStockData(symbol = 'AAPL') {
     return null;
   }
 }
+
+function setupStockChart() {
+  const ctx = document.getElementById('stocksChart').getContext('2d');
+  stocksChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Stock Price',
+        data: [],
+        borderColor: '#4caf50',
+        backgroundColor: 'rgba(76,175,80,0.1)',
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true },
+        tooltip: { enabled: true }
+      },
+      scales: {
+        x: { ticks: { color: '#aaa' }, grid: { display: false }},
+        y: { ticks: { color: '#aaa' }, grid: { color: '#222' }}
+      }
+    }
+  });
+}
+
 async function updateStockChart(symbol = 'AAPL') {
   const stockData = await fetchStockData(symbol);
-
   if (!stockData) {
-    alert('Failed to fetch stock data or API limit reached.');
+    alert('Failed to fetch stock data.');
     return;
   }
 
@@ -125,14 +107,11 @@ async function updateStockChart(symbol = 'AAPL') {
   document.getElementById('stocksSummary').textContent = `Showing last 30 days of ${symbol} closing prices.`;
 }
 
+// Weather chart
 function setupWeatherChart() {
   const ctx = document.getElementById('weatherChart').getContext('2d');
 
-  if (weatherChartInstance) {
-    weatherChartInstance.destroy();
-  }
-
-  weatherChartInstance = new Chart(ctx, {
+  weatherChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -142,7 +121,7 @@ function setupWeatherChart() {
         backgroundColor: '#00bcd4',
         borderRadius: 10,
         barPercentage: 0.6,
-        borderSkipped: false,
+        borderSkipped: false
       }]
     },
     options: {
@@ -153,15 +132,8 @@ function setupWeatherChart() {
         tooltip: { enabled: true }
       },
       scales: {
-        x: {
-          ticks: { color: '#aaa' },
-          grid: { display: false }
-        },
-        y: {
-          ticks: { color: '#aaa' },
-          grid: { color: '#222' },
-          beginAtZero: true
-        }
+        x: { ticks: { color: '#aaa' }, grid: { display: false }},
+        y: { ticks: { color: '#aaa' }, grid: { color: '#222' }, beginAtZero: true }
       },
       animation: {
         duration: 600,
@@ -173,13 +145,13 @@ function setupWeatherChart() {
   document.getElementById('weatherSummary').textContent = 'Weekly temperature forecast.';
 }
 
+// News
 function loadNews() {
   const newsFeed = document.getElementById('newsFeed');
-
   const newsItems = [
     { title: 'Stock Market hits new highs', date: '2025-07-12' },
     { title: 'Storm warning issued for West Coast', date: '2025-07-11' },
-    { title: 'Tech stocks lead the rally', date: '2025-07-10' },
+    { title: 'Tech stocks lead the rally', date: '2025-07-10' }
   ];
 
   newsFeed.innerHTML = newsItems.map(
@@ -187,6 +159,7 @@ function loadNews() {
   ).join('');
 }
 
+// Calculator
 function setupCalculator() {
   const form = document.getElementById('investmentForm');
   const resultDiv = document.getElementById('calcResult');
@@ -212,7 +185,7 @@ function setupCalculator() {
     }
 
     const monthsElapsed = (now.getFullYear() - startDate.getFullYear()) * 12 + (now.getMonth() - startDate.getMonth());
-    const monthlyReturn = Math.pow(1 + 0.10, 1 / 12) - 1; // ~0.797% monthly
+    const monthlyReturn = Math.pow(1 + 0.10, 1 / 12) - 1;
 
     const futureValue = amount * Math.pow(1 + monthlyReturn, monthsElapsed);
 
