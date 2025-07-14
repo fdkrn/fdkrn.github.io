@@ -1,9 +1,11 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   setupTabs();
   setupWeatherChart();
   loadNews();
   setupCalculator();
   setupStockChart();
+
+  await loadDaxData();
 
   const stockSelect = document.getElementById('stockSelect');
   const toggleDax = document.getElementById('toggleDax');
