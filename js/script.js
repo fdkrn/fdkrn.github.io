@@ -69,7 +69,10 @@ async function fetchStockData(symbol = 'AAPL') {
 
 // Chart Setup initial (leer)
 function setupStockChart() {
-  const ctx = document.getElementById('stocksChart').getContext('2d');
+  const ctx = document.getElementById('stocksChart')?.getContext('2d');
+  if (!ctx){
+    console.error('stocksChart canvas not found!');
+  }
   stocksChart = new Chart(ctx, {
     type: 'line',
     data: {
