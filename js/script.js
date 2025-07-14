@@ -1,21 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
-  setupStockChart();
   setupWeatherChart();
   loadNews();
   setupCalculator();
 
   const stockSelect = document.getElementById('stockSelect');
+  const toggleDax = document.getElementById('toggleDax');
+
   stockSelect.addEventListener('change', () => {
-    const selectedSymbol = stockSelect.value;
-    if (selectedSymbol) {
-      updateStockChart(selectedSymbol);
-    }
+    updateStockChart(stockSelect.value);
   });
 
-  // Load initial stock chart
+  toggleDax.addEventListener('change', (e) => {
+    showDax = e.target.checked;
+    updateStockChart(stockSelect.value);
+  });
+
   updateStockChart('AAPL');
 });
+
+// Globale Variablen
+let stocksChart;
+let showDax = true;
 
 // Tab switching
 function setupTabs() {
@@ -32,9 +38,7 @@ function setupTabs() {
   });
 }
 
-let stocksChart, weatherChart;
-
-// Stocks with Yahoo Finance
+// Fetch Stock Data von Yahoo Finance via Proxy
 async function fetchStockData(symbol = 'AAPL') {
   const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1mo`;
   const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(yahooUrl)}`;
@@ -63,19 +67,14 @@ async function fetchStockData(symbol = 'AAPL') {
   }
 }
 
+// Chart Setup initial (leer)
 function setupStockChart() {
   const ctx = document.getElementById('stocksChart').getContext('2d');
   stocksChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: [],
-      datasets: [{
-        label: 'Stock Price',
-        data: [],
-        borderColor: '#4caf50',
-        backgroundColor: 'rgba(76,175,80,0.1)',
-        tension: 0.3
-      }]
+      datasets: []
     },
     options: {
       responsive: true,
@@ -92,6 +91,7 @@ function setupStockChart() {
   });
 }
 
+// Update Chart mit Symbol und optional DAX als Vergleich
 async function updateStockChart(symbol = 'AAPL') {
   const stockData = await fetchStockData(symbol);
   if (!stockData) {
@@ -99,72 +99,36 @@ async function updateStockChart(symbol = 'AAPL') {
     return;
   }
 
+  let datasets = [{
+    label: `${symbol} Stock Price`,
+    data: stockData.prices,
+    borderColor: '#4caf50',
+    backgroundColor: 'rgba(76,175,80,0.1)',
+    tension: 0.3
+  }];
+
+  if (showDax) {
+    const daxData = await fetchStockData('^GDAXI');
+    if (daxData) {
+      datasets.push({
+        label: 'DAX',
+        data: daxData.prices,
+        borderColor: 'rgba(0, 100, 200, 0.5)',
+        backgroundColor: 'rgba(0, 100, 200, 0.1)',
+        tension: 0.3
+      });
+    }
+  }
+
   stocksChart.data.labels = stockData.labels;
-  stocksChart.data.datasets[0].data = stockData.prices;
-  stocksChart.data.datasets[0].label = `${symbol} Stock Price`;
+  stocksChart.data.datasets = datasets;
   stocksChart.update();
 
   document.getElementById('stocksSummary').textContent = `Showing last 30 days of ${symbol} closing prices.`;
 }
 
-const daxCanvas = document.getElementById('backgroundDaxChart');
-const daxCtx = daxCanvas.getContext('2d');
-let daxChart;
-
-// Resize handling
-function resizeDaxCanvas() {
-  daxCanvas.width = window.innerWidth;
-  daxCanvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeDaxCanvas);
-resizeDaxCanvas();
-
-// Fetch & draw DAX data
-async function drawDaxBackgroundChart() {
-  try {
-    const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/%5EGDAXI?interval=1d&range=6mo'));
-    const data = await response.json();
-    const timestamps = data.chart.result[0].timestamp;
-    const closes = data.chart.result[0].indicators.quote[0].close;
-
-    if (daxChart) {
-      daxChart.destroy();
-    }
-
-    daxChart = new Chart(daxCtx, {
-      type: 'line',
-      data: {
-        labels: timestamps.map(ts => new Date(ts * 1000).toLocaleDateString()),
-        datasets: [{
-          data: closes,
-          borderColor: 'rgba(0, 100, 200, 0.3)',
-          backgroundColor: 'rgba(0, 100, 200, 0.1)',
-          fill: true,
-          pointRadius: 0,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: false,
-        maintainAspectRatio: false,
-        scales: { x: { display: false }, y: { display: false } },
-        plugins: { legend: { display: false }, tooltip: { enabled: false } },
-        animation: false
-      }
-    });
-  } catch (error) {
-    console.error("Failed to fetch DAX data", error);
-  }
-}
-
-drawDaxBackgroundChart();
-
-// Toggle functionality
-document.getElementById('toggleBackgroundChart').addEventListener('change', (e) => {
-  daxCanvas.style.display = e.target.checked ? 'block' : 'none';
-});
-
-// Weather chart
+// Wetter Chart Setup
+let weatherChart;
 function setupWeatherChart() {
   const ctx = document.getElementById('weatherChart').getContext('2d');
 
@@ -202,7 +166,7 @@ function setupWeatherChart() {
   document.getElementById('weatherSummary').textContent = 'Weekly temperature forecast.';
 }
 
-// News
+// News Feed laden
 function loadNews() {
   const newsFeed = document.getElementById('newsFeed');
   const newsItems = [
@@ -216,7 +180,7 @@ function loadNews() {
   ).join('');
 }
 
-// Calculator
+// Investment Rechner
 function setupCalculator() {
   const form = document.getElementById('investmentForm');
   const resultDiv = document.getElementById('calcResult');
