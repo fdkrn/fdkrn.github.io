@@ -1,7 +1,7 @@
 // Globale Variablen
 let stocksChart;
 let daxData = null;
-let showDax = true; // Standard: DAX anzeigen
+let showDax = false; // Standard: DAX anzeigen
 let displayMode = 'currency'; // 'currency' oder 'percent'
 
 document.addEventListener('DOMContentLoaded', async () => {
