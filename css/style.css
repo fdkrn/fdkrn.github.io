@@ -65,6 +65,22 @@ body {
   box-shadow: 0 4px 10px rgba(0, 188, 212, 0.5);
 }
 
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.25s ease forwards;
+  will-change: opacity, transform;
+}
+
+.tabs .tab:focus {
+  outline: 2px solid #00bcd4;
+  outline-offset: 3px;
+}
+
+.tabs .tab:hover:not(.active) {
+  background-color: rgba(0, 188, 212, 0.15);
+  color: #00bcd4;
+}
+
 /* Main content */
 main {
   padding: 1.5rem 2.5rem;
