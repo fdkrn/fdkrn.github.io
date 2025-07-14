@@ -2,6 +2,7 @@
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -82,8 +83,15 @@ main {
 }
 
 @keyframes fadeIn {
-  from {opacity: 0; transform: translateY(5px);}
-  to {opacity: 1; transform: translateY(0);}
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 h2 {
@@ -99,7 +107,7 @@ h2 {
   background: #1c1c1c;
   padding: 0.9rem 1rem;
   border-radius: 18px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
 }
 
 canvas {
@@ -125,7 +133,7 @@ canvas {
   background-color: #222;
   padding: 1.4rem 2rem;
   border-radius: 18px;
-  box-shadow: 0 4px 12px rgba(0,188,212,0.25);
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.25);
   color: #ddd;
   font-size: 1rem;
   max-width: 700px;
@@ -171,7 +179,7 @@ canvas {
   font-weight: 700;
   font-size: 1.05rem;
   cursor: pointer;
-  box-shadow: 0 6px 12px rgba(0,188,212,0.5);
+  box-shadow: 0 6px 12px rgba(0, 188, 212, 0.5);
   transition: background-color 0.3s ease;
 }
 
@@ -190,7 +198,7 @@ canvas {
   background: #1f1f1f;
   padding: 1rem 1.3rem;
   border-radius: 16px;
-  box-shadow: 0 3px 14px rgba(0,0,0,0.7);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.7);
   max-width: 700px;
 }
 
@@ -237,4 +245,60 @@ canvas {
 .stock-search select:focus {
   border-color: #666;
   outline: none;
+}
+
+.switch-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider itself */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 28px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+/* Checked style */
+.switch input:checked+.slider {
+  background-color: #2196F3;
+}
+
+.switch input:checked+.slider:before {
+  transform: translateX(22px);
 }

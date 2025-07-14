@@ -53,7 +53,7 @@ async function fetchStockData(symbol = 'AAPL') {
 
     const labels = timestamps.map(ts => {
       const date = new Date(ts * 1000);
-      return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     });
 
     return { labels, prices };
@@ -85,8 +85,8 @@ function setupStockChart() {
         tooltip: { enabled: true }
       },
       scales: {
-        x: { ticks: { color: '#aaa' }, grid: { display: false }},
-        y: { ticks: { color: '#aaa' }, grid: { color: '#222' }}
+        x: { ticks: { color: '#aaa' }, grid: { display: false } },
+        y: { ticks: { color: '#aaa' }, grid: { color: '#222' } }
       }
     }
   });
@@ -106,6 +106,63 @@ async function updateStockChart(symbol = 'AAPL') {
 
   document.getElementById('stocksSummary').textContent = `Showing last 30 days of ${symbol} closing prices.`;
 }
+
+const daxCanvas = document.getElementById('backgroundDaxChart');
+const daxCtx = daxCanvas.getContext('2d');
+let daxChart;
+
+// Resize handling
+function resizeDaxCanvas() {
+  daxCanvas.width = window.innerWidth;
+  daxCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeDaxCanvas);
+resizeDaxCanvas();
+
+// Fetch & draw DAX data
+async function drawDaxBackgroundChart() {
+  try {
+    const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/%5EGDAXI?interval=1d&range=6mo'));
+    const data = await response.json();
+    const timestamps = data.chart.result[0].timestamp;
+    const closes = data.chart.result[0].indicators.quote[0].close;
+
+    if (daxChart) {
+      daxChart.destroy();
+    }
+
+    daxChart = new Chart(daxCtx, {
+      type: 'line',
+      data: {
+        labels: timestamps.map(ts => new Date(ts * 1000).toLocaleDateString()),
+        datasets: [{
+          data: closes,
+          borderColor: 'rgba(0, 100, 200, 0.3)',
+          backgroundColor: 'rgba(0, 100, 200, 0.1)',
+          fill: true,
+          pointRadius: 0,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        scales: { x: { display: false }, y: { display: false } },
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        animation: false
+      }
+    });
+  } catch (error) {
+    console.error("Failed to fetch DAX data", error);
+  }
+}
+
+drawDaxBackgroundChart();
+
+// Toggle functionality
+document.getElementById('toggleBackgroundChart').addEventListener('change', (e) => {
+  daxCanvas.style.display = e.target.checked ? 'block' : 'none';
+});
 
 // Weather chart
 function setupWeatherChart() {
@@ -132,7 +189,7 @@ function setupWeatherChart() {
         tooltip: { enabled: true }
       },
       scales: {
-        x: { ticks: { color: '#aaa' }, grid: { display: false }},
+        x: { ticks: { color: '#aaa' }, grid: { display: false } },
         y: { ticks: { color: '#aaa' }, grid: { color: '#222' }, beginAtZero: true }
       },
       animation: {
