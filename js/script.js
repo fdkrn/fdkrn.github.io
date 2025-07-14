@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Globale Variablen
 let stocksChart;
+let daxData = null; //globaler speicher
 let showDax = true;
 
 // Tab switching
@@ -70,66 +71,76 @@ async function fetchStockData(symbol = 'AAPL') {
 
 // Chart Setup initial (leer)
 function setupStockChart() {
-  const ctx = document.getElementById('stocksChart')?.getContext('2d');
-  if (!ctx){
-    console.error('stocksChart canvas not found!');
-  }
+  const ctx = document.getElementById('stocksChart').getContext('2d');
   stocksChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: [],
-      datasets: []
+      datasets: [
+        {
+          label: 'Stock Price',
+          data: [],
+          borderColor: '#4caf50',
+          backgroundColor: 'rgba(76,175,80,0.1)',
+          tension: 0.3
+        },
+        {
+          label: 'DAX',
+          data: [],
+          borderColor: 'rgba(0,100,200,0.4)',
+          backgroundColor: 'rgba(0,100,200,0.1)',
+          tension: 0.3,
+          hidden: !showDax // Start abhängig vom Schalter
+        }
+      ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { display: true },
-        tooltip: { enabled: true }
-      },
-      scales: {
-        x: { ticks: { color: '#aaa' }, grid: { display: false } },
-        y: { ticks: { color: '#aaa' }, grid: { color: '#222' } }
+        legend: { display: true }
       }
     }
   });
 }
 
-// Update Chart mit Symbol und optional DAX als Vergleich
+async function loadDaxData() {
+  const res = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/%5EGDAXI?interval=1d&range=1mo'));
+  const data = await res.json();
+  const timestamps = data.chart.result[0].timestamp;
+  const closes = data.chart.result[0].indicators.quote[0].close;
+  daxData = {
+    labels: timestamps.map(ts => new Date(ts * 1000).toISOString().split('T')[0]),
+    prices: closes
+  };
+}
+
+// Chart aktualisieren
 async function updateStockChart(symbol = 'AAPL') {
   const stockData = await fetchStockData(symbol);
-  if (!stockData) {
-    alert('Failed to fetch stock data.');
-    return;
-  }
-
-  let datasets = [{
-    label: `${symbol} Stock Price`,
-    data: stockData.prices,
-    borderColor: '#4caf50',
-    backgroundColor: 'rgba(76,175,80,0.1)',
-    tension: 0.3
-  }];
-
-  if (showDax) {
-    const daxData = await fetchStockData('^GDAXI');
-    if (daxData) {
-      datasets.push({
-        label: 'DAX',
-        data: daxData.prices,
-        borderColor: 'rgba(0, 100, 200, 0.5)',
-        backgroundColor: 'rgba(0, 100, 200, 0.1)',
-        tension: 0.3
-      });
-    }
-  }
 
   stocksChart.data.labels = stockData.labels;
-  stocksChart.data.datasets = datasets;
-  stocksChart.update();
+  stocksChart.data.datasets[0].data = stockData.prices;
+  stocksChart.data.datasets[0].label = `${symbol} Stock Price`;
 
-  document.getElementById('stocksSummary').textContent = `Showing last 30 days of ${symbol} closing prices.`;
+  if (daxData) {
+    stocksChart.data.datasets[1].data = alignData(stockData.labels, daxData);
+  }
+
+  stocksChart.update();
 }
+// Daten auf Labels angleichen
+function alignData(labels, otherData) {
+  const map = Object.fromEntries(otherData.labels.map((l, i) => [l, otherData.prices[i]]));
+  return labels.map(l => map[l] ?? null);
+}
+
+// Toggle DAX Linie
+document.getElementById('toggleDax').addEventListener('change', e => {
+  showDax = e.target.checked;
+  stocksChart.data.datasets[1].hidden = !showDax;
+  stocksChart.update();
+});
 
 // Wetter Chart Setup
 let weatherChart;
