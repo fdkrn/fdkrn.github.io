@@ -150,9 +150,7 @@ function setupStockChart() {
             callback: function(value) {
               if (displayMode === 'currency') {
                 return '€' + value.toFixed(2);
-              } else if (displayMode === 'points') {
-                return value + ' pts';
-              } else if (displayMode === 'percent') {
+              }  else if (displayMode === 'percent') {
                 return (value - 100).toFixed(1) + '%';
               } else {
                 return value;
