@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   toggleDax.addEventListener('change', (e) => {
     showDax = e.target.checked;
     updateStockChart(stockSelect.value);
+    const normalizedData = normalizeTo100(selectedAssets);
   });
 
   updateStockChart('AAPL');
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 let stocksChart;
 let daxData = null; //globaler speicher
 let showDax = true;
+let displayMode = 'currency'; // globaler Modus
 
 // Tab switching
 function setupTabs() {
@@ -39,6 +41,16 @@ function setupTabs() {
       tab.classList.add('active');
       document.getElementById(tab.dataset.tab).classList.add('active');
     });
+  });
+}
+
+function normalizeTo100(assets) {
+  return assets.map(asset => {
+    const startPrice = asset.prices[0].value;
+    return asset.prices.map(point => ({
+      time: point.time,
+      value: (point.value / startPrice) * 100
+    }));
   });
 }
 
@@ -101,7 +113,33 @@ function setupStockChart() {
       maintainAspectRatio: false,
       plugins: {
         legend: { display: true }
+      },
+      scales: {
+        y: {
+          ticks: {
+            callback: function(value) {
+              if (displayMode === 'currency') {
+                return '€' + value.toFixed(2);
+              } else if (displayMode === 'points') {
+                return value + ' pts';
+              } else if (displayMode === 'percent') {
+                return (value - 100).toFixed(1) + '%';
+              } else {
+                return value;
+              }
+            }
+          }
+        }
       }
+    }
+  });
+}
+
+function normalizeChartData() {
+  stocksChart.data.datasets.forEach(dataset => {
+    if (dataset.data.length > 0) {
+      const startValue = dataset.data[0];
+      dataset.data = dataset.data.map(v => (v / startValue) * 100);
     }
   });
 }
@@ -131,6 +169,22 @@ async function updateStockChart(symbol = 'AAPL') {
 
   stocksChart.update();
 }
+
+function updateChartData(selectedAssets) {
+  if (selectedAssets.length === 1) {
+    if (selectedAssets[0].type === 'index') {
+      displayMode = 'points';
+    } else {
+      displayMode = 'currency';
+    }
+  } else {
+    displayMode = 'percent';
+    normalizeChartData();
+  }
+
+  stocksChart.update();
+}
+
 // Daten auf Labels angleichen
 function alignData(labels, otherData) {
   const map = Object.fromEntries(otherData.labels.map((l, i) => [l, otherData.prices[i]]));
