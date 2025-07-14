@@ -224,13 +224,14 @@ async function loadDaxData() {
 // Hilfsfunktion: DAX-Daten an Stock-Labels angleichen
 function alignData(labels, otherData) {
   const map = Object.fromEntries(otherData.labels.map((l,i) => [l, otherData.prices[i]]));
-  return labels.map(l => map[l] ?? null);
+  return labels.map(l => map[l] ?? NaN);
 }
 
-// Daten normalisieren (Indexierung auf 100)
+// Daten normalisieren (Indexierung auf 100), überspringt NaN
 function normalizeData(data) {
-  const start = data[0];
-  return data.map(v => (v / start) * 100);
+  const start = data.find(v => !isNaN(v));
+  if (start === undefined) return data.map(() => NaN);
+  return data.map(v => isNaN(v) ? NaN : (v / start) * 100);
 }
 
 // Update Chart-Daten und Anzeige
@@ -261,7 +262,7 @@ async function updateStockChart(symbol) {
   }
 
   if (showDax && daxData) {
-    const alignedDaxPrices = alignData(stockData.labels, daxData).map(v => v ?? 0);
+    const alignedDaxPrices = alignData(stockData.labels, daxData);
     updateChartData(stockData.prices, alignedDaxPrices, stockData.labels);
   } else {
     updateChartData(stockData.prices, [], stockData.labels);
