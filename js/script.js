@@ -36,12 +36,12 @@ let stocksChart, weatherChart;
 
 // Stocks with Yahoo Finance
 async function fetchStockData(symbol = 'AAPL') {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1mo`;
+  const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1mo`;
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(yahooUrl)}`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(proxyUrl);
     const data = await res.json();
-    console.log('Yahoo API response:', data);
 
     if (!data.chart || !data.chart.result) {
       throw new Error('Invalid symbol or data not found');
