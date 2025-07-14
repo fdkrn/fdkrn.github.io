@@ -23,11 +23,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateStockChart('AAPL');
 });
 
+setOriginalData(newData);
+updateChartDisplay();
+
 // Globale Variablen
 let stocksChart;
 let daxData = null; //globaler speicher
 let showDax = true;
 let displayMode = 'currency'; // globaler Modus
+let originalData = [ [], [] ]; // 2 datasets: z.B. Aktie + DAX
+
+function setOriginalData(newData) {
+  originalData = newData.map(arr => [...arr]); // tiefe Kopie, damit keine Referenzprobleme
+}
 
 // Tab switching
 function setupTabs() {
@@ -51,6 +59,28 @@ function normalizeTo100(assets) {
       time: point.time,
       value: (point.value / startPrice) * 100
     }));
+  });
+}
+
+function updateDisplayMode() {
+  const datasets = stocksChart.data.datasets;
+  const daxVisible = !datasets[1].hidden;
+  const stockVisible = !datasets[0].hidden;
+
+  if (daxVisible && stockVisible) {
+    displayMode = 'percent';
+  } else{
+    displayMode = 'currency';
+  }
+}
+
+
+function normalizeChartData() {
+  if (!originalData.length || originalData.some(arr => arr.length === 0)) return;
+
+  stocksChart.data.datasets.forEach((dataset, i) => {
+    const startValue = originalData[i][0];
+    dataset.data = originalData[i].map(value => (value / startValue) * 100);
   });
 }
 
@@ -167,6 +197,20 @@ async function updateStockChart(symbol = 'AAPL') {
     stocksChart.data.datasets[1].data = alignData(stockData.labels, daxData);
   }
 
+  stocksChart.update();
+}
+
+function updateChartDisplay() {
+  updateDisplayMode();
+
+  if (displayMode === 'percent') {
+    normalizeChartData();
+  } else {
+    // Preis/Points zurücksetzen
+    stocksChart.data.datasets.forEach((dataset, i) => {
+      dataset.data = [...originalData[i]];
+    });
+  }
   stocksChart.update();
 }
 
