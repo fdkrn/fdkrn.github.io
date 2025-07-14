@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupWeatherChart();
   loadNews();
   setupCalculator();
+  setupStockChart();
 
   const stockSelect = document.getElementById('stockSelect');
   const toggleDax = document.getElementById('toggleDax');

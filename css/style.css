@@ -247,6 +247,11 @@ canvas {
   outline: none;
 }
 
+#stocksChart {
+  width: 100%;
+  height: 400px;
+}
+
 .switch {
   position: relative;
   display: inline-block;
